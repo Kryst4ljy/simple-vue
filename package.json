@@ -1,0 +1,24 @@
+{
+  "name": "simple-vue",
+  "version": "1.0.0",
+  "description": "一个简单的vue实现：目前实现了vue的双向绑定，持续更新中",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kryst4ljy/simple-vue.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kryst4ljy/simple-vue/issues"
+  },
+  "homepage": "https://github.com/Kryst4ljy/simple-vue#readme",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.5"
+  }
+}
