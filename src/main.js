@@ -1,8 +1,8 @@
-import Vue from "./core/Vue";
+import Vue from './core/Vue';
 
 new Vue({
-  el: "#app",
+  el: '#app',
   data: {
-    val: "",
+    val: '',
   },
 });

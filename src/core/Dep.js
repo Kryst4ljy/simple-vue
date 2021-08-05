@@ -1,3 +1,7 @@
+/**
+ * @name Dep
+ * @description Dep类为每个频道的订阅者列表，提供一个subs数组来维护此频道的订阅者
+ */
 export default class Dep {
   static target = null;
 

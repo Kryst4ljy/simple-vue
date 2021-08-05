@@ -1,6 +1,12 @@
-import Watcher from "./Watcher";
-import Dep from "./Dep";
+import Watcher from './Watcher';
+import Dep from './Dep';
 
+/**
+ * @name Vue 简易vue实现
+ * @description 这是一个简单的vue实现，目前只实现了vue的数据绑定以及 v-model v-bind 指令，持续更新中...
+ * @param {Element} el 项目的根节点
+ * @param {Object} data 实现数据响应的对象
+ */
 export default class Vue {
   constructor(option) {
     this.$el = document.querySelector(option.el); // 项目根节点
@@ -13,7 +19,11 @@ export default class Vue {
     this.complie(this.$el);
   }
 
-  // 监听对象属性变化方法，自动订阅以及发布订阅
+  /**
+   * @name obverse
+   * @description 监听对象属性变化方法，自动订阅以及发布订阅
+   * @param {Object} obj 实现数据响应的对象
+   */
   obverse(obj) {
     if (!(obj instanceof Object)) return;
     // 遍历对象
@@ -37,7 +47,12 @@ export default class Vue {
       });
     }
   }
-  // 挂载数据
+
+  /**
+   * @name complie
+   * @description 解析根节点，遍历子节点去解析指令，并注册为观众，绑定频道
+   * @param {Node} root 节点
+   */
   complie(root) {
     // 遍历根节点下的所有节点，解析指令
     const nodes = root.children;
@@ -49,24 +64,21 @@ export default class Vue {
       }
 
       // 绑定子节点指令
-      if (
-        node.hasAttribute("v-model") &&
-        (node.tagName == "INPUT" || node.tagName == "TEXTAREA")
-      ) {
+      if (node.hasAttribute('v-model') && (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')) {
         // 如果元素绑定了 v-model指令 且 元素为输入框
         node.addEventListener(
-          "input",
+          'input',
           (e) => {
             // 赋值对应的属性，更新订阅
-            const attr = node.getAttribute("v-model");
+            const attr = node.getAttribute('v-model');
             this.$data[attr] = e.target.value;
           },
-          false
+          false,
         );
       }
 
-      if (node.hasAttribute("v-bind")) {
-        const attr = node.getAttribute("v-bind");
+      if (node.hasAttribute('v-bind')) {
+        const attr = node.getAttribute('v-bind');
         // 创建 观众 - 自动订阅频道
         new Watcher(this.$data, attr, (newVal) => {
           node.innerText = newVal;
