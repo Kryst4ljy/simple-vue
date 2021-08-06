@@ -47,6 +47,13 @@ export const replaceStr = function (data, node) {
   const attrReg = /\{\{((?:.|\r?\n)+?)\}\}/;
   const str = node.data;
   const attr = str.match(attrReg)[1].trim();
+  // 初始化赋值
+  const getter = parsePath(attr);
+  const initValue = getter(data);
+  const initRes = str.replace(replaceReg, function (...args) {
+    return initValue;
+  });
+  node.data = initRes;
   // 创建 观众 - 自动订阅频道
   new Watcher(data, attr, (newVal) => {
     const res = str.replace(replaceReg, function (...args) {
