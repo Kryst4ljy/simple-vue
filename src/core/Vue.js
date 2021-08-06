@@ -1,6 +1,6 @@
 import Watcher from './Watcher';
 import Dep from './Dep';
-import { setAttr, replaceStr } from '../utils';
+import { setAttr, replaceStr, initData } from '../utils';
 
 /**
  * @name Vue 简易vue实现
@@ -76,29 +76,7 @@ Vue.prototype.complie = function (root) {
       this.complie(node);
     }
 
-    /*-----------------解析模板指令-------------------*/
-    // 绑定子节点指令
-    if (node.hasAttribute('v-model') && (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')) {
-      // 如果元素绑定了 v-model指令 且 元素为输入框
-      node.addEventListener(
-        'input',
-        (e) => {
-          // 赋值对应的属性，更新订阅
-          const attr = node.getAttribute('v-model');
-          setAttr(this.$data, attr, e.target.value);
-        },
-        false,
-      );
-    }
-
-    if (node.hasAttribute('v-bind')) {
-      const attr = node.getAttribute('v-bind');
-      // 创建 观众 - 自动订阅频道
-      new Watcher(this.$data, attr, (newVal) => {
-        node.innerText = newVal;
-      });
-    }
-
+    // 这里要先解析双括号，因为要防止双括号初始化会向节点中添加文本节点，会在模板解析中再次初始化
     /*-----------------解析 {{}} -------------------*/
     if (node.childNodes.length !== 0) {
       const childList = node.childNodes;
@@ -107,6 +85,33 @@ Vue.prototype.complie = function (root) {
           // 文本节点
           replaceStr(this.$data, child);
         }
+      });
+    }
+
+    /*-----------------解析模板指令-------------------*/
+    // 绑定子节点指令
+    if (node.hasAttribute('v-model') && (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')) {
+      // 初始化赋值
+      const attr = node.getAttribute('v-model');
+      initData(this.$data, attr, node, 'value');
+      // 如果元素绑定了 v-model指令 且 元素为输入框
+      node.addEventListener(
+        'input',
+        (e) => {
+          // 赋值对应的属性，更新订阅
+          setAttr(this.$data, attr, e.target.value);
+        },
+        false,
+      );
+    }
+
+    if (node.hasAttribute('v-bind')) {
+      const attr = node.getAttribute('v-bind');
+      // 初始化赋值
+      initData(this.$data, attr, node, 'innerText');
+      // 创建 观众 - 自动订阅频道
+      new Watcher(this.$data, attr, (newVal) => {
+        node.innerText = newVal;
       });
     }
   }
