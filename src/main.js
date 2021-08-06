@@ -1,8 +1,11 @@
 import Vue from './core/Vue';
 
-new Vue({
+const app = new Vue({
   el: '#app',
-  data: {
-    val: '',
+  data() {
+    return {
+      val: '',
+      info: { text: '123' }, // 实现了对象的双向绑定
+    };
   },
 });

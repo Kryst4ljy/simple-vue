@@ -8,8 +8,12 @@
 
 <body>
   <div id="app">
-    <input type="text" v-model="val" name="">
+    val：<input type="text" v-model="val" name="">
+    info：<input type="text" v-model="info.text" name="">
     <p v-bind="val"></p>
+    <p v-bind="info.text"></p>
+    <p>属性节点：{{val}}</p>
+    <p>对象节点：{{ info.text}}</p>
   </div>
 
   <script src="./src/main.js"></script>
