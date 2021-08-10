@@ -1,6 +1,6 @@
 import Watcher from './Watcher';
 import Dep from './Dep';
-import { setAttr, replaceStr, initData } from '../utils';
+import { setAttr, replaceStr } from '../utils';
 
 /**
  * @name Vue 简易vue实现
@@ -93,7 +93,10 @@ Vue.prototype.complie = function (root) {
     if (node.hasAttribute('v-model') && (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')) {
       // 初始化赋值
       const attr = node.getAttribute('v-model');
-      initData(this.$data, attr, node, 'value');
+      // 创建 观众 - 自动订阅频道
+      new Watcher(this.$data, attr, (newVal) => {
+        node.value = newVal;
+      });
       // 如果元素绑定了 v-model指令 且 元素为输入框
       node.addEventListener(
         'input',
@@ -107,8 +110,6 @@ Vue.prototype.complie = function (root) {
 
     if (node.hasAttribute('v-bind')) {
       const attr = node.getAttribute('v-bind');
-      // 初始化赋值
-      initData(this.$data, attr, node, 'innerText');
       // 创建 观众 - 自动订阅频道
       new Watcher(this.$data, attr, (newVal) => {
         node.innerText = newVal;

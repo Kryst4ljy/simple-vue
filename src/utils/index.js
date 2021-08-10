@@ -47,8 +47,6 @@ export const replaceStr = function (data, node) {
   const attrReg = /\{\{((?:.|\r?\n)+?)\}\}/;
   const str = node.data;
   const attr = str.match(attrReg)[1].trim();
-  // 初始化赋值
-  initData(data, attr, node, 'data')
   // 创建 观众 - 自动订阅频道
   new Watcher(data, attr, (newVal) => {
     const res = str.replace(replaceReg, function (...args) {
@@ -57,31 +55,3 @@ export const replaceStr = function (data, node) {
     node.data = res;
   });
 };
-
-/**
- * @name initData
- * @description 初始化 v-bind {{}} 双向绑定语法赋值
- * @param {Object} data 双向绑定的data对象
- * @param {String} attr 双向绑定的data对象的属性 可能为 a.b.c
- * @param {Node} vm 要绑定的节点 - 订阅属性（频道）的观众
- * @param {String} key 要被赋值的节点的属性 - input的value 或者文本节点的 innerText等
- */
-export const initData = function (data, attr, vm, key) {
-  const replaceReg = /\{\{((?:.|\r?\n)+?)\}\}/g;
-  const attrReg = /\{\{((?:.|\r?\n)+?)\}\}/;
-  // 先获取data中此attr属性的值
-  const getter = parsePath(attr);
-  const initValue = getter(data);
-  let str = vm[key];
-  // 先判断是 v-bind 还是 {{}}语法 - 看 vm[key]是否存在 以及是否存在 {{}}
-  if (!!str && attrReg.test(str)) {
-    const initRes = str.replace(replaceReg, function (...args) {
-      return initValue;
-    });
-    // 进行初始化的赋值操作
-    vm[key] = initRes;
-    return;
-  }
-  // 进行初始化的赋值操作
-  vm[key] = initValue;
-}

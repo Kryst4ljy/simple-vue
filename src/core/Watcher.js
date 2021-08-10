@@ -20,7 +20,9 @@ export default class Watcher {
   // 订阅频道
   get() {
     Dep.target = this;
-    this.getter.call(this._data, this._data); // 触发data的get方法，进行自动订阅
+    const value = this.getter.call(this._data, this._data); // 触发data的get方法，进行自动订阅
+    // 初始化赋值
+    this.cb(value);
     Dep.target = null;
   }
 
