@@ -38,7 +38,7 @@ function initData(vm) {
  * @param {*} vm 当前vue实例
  * @param {*} sourceKey 源数据 需要代理的key - data
  * @param {*} key 代理后的key
- * @description 代理对象（app[data][info] -> app[info]）
+ * @description 代理对象（app[data][info] -> app[info]）这样可以直接通过 vm.info 操作vm.$data.info
  */
 function proxy(vm, sourceKey, key) {
   sharedPropertyDefinition.get = function proxyGetter() {
@@ -59,7 +59,8 @@ export function observe(obj) {
   if (!(obj instanceof Object)) return;
   // 遍历对象
   for (let key in obj) {
-    let val = obj[key]; // 赋值
+    // 赋值 - 这边必须创建一个临时变量储存obj[key]，不然在get中返回obj[key]会再次触发get，陷入死循环
+    let val = obj[key];
     if (val instanceof Object) {
       observe(val);
     }
@@ -69,6 +70,7 @@ export function observe(obj) {
       configurable: true, // 是否可配置
       get() {
         // console.log(`get：${key} - ${val}`);
+        // 直接通过取值无法订阅，必须借由创建watcher来添加订阅
         dep.depend(); // 订阅
         return val;
       },
@@ -76,6 +78,7 @@ export function observe(obj) {
         if (newVal === val) return;
         // console.log(`set：${key} - ${newVal}`);
         val = newVal;
+        // 发布时是触发watcher的update函数从而进行不同的操作，比如input是setAttr等
         dep.notify(); // 发布
       },
     });
