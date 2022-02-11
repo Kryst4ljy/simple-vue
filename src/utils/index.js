@@ -55,3 +55,13 @@ export const replaceStr = function (data, node) {
     node.data = res;
   });
 };
+
+// 定义对象属性方法
+export const def = (obj, key, val, enumerable) => {
+  Object.defineProperty(obj, key, {
+    value: val,
+    enumerable,
+    writable: true,
+    configurable: true,
+  });
+};
